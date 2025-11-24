@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 
 from fastapi import FastAPI
@@ -8,12 +9,7 @@ from strands import Agent
 from strands import tool
 from strands.models.ollama import OllamaModel
 
-from ollama import chat
-from ollama import Tool
 
-# from strands_agents.agents import Agent
-# from strandsagents.llms import OllamaLLM
-# from strands_agents.tools import Tool, tool
 
 
 load_dotenv()
@@ -68,23 +64,49 @@ chat_agent = Agent(model=ollama_model, tools=[calculator])
 
 
 
+
 # @app.post("/chat", response_model=ChatResponse)
 # async def chat_endpoint(request: ChatRequest):
-#     """
-#     Recebe uma mensagem do usuário, envia para o Agente de IA e retorna a resposta.
-#     """
 
-#     user_message = request.message
 
-#     response = await chat_agent.chat(user_message)
+#     agent_response = chat_agent(request.message)
 
-#     return ChatResponse(response=response)
+#     if hasattr(agent_response, 'content'):
+#             text = agent_response.content
+#     elif hasattr(agent_response, 'text'):
+#             text = agent_response.text
+#     else:
+#             text = str(agent_response)
+
+    
+#     return ChatResponse(response=text)
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
-
-
-    agent_response = chat_agent(request.message)
-    text = str(agent_response)
-
-    return ChatResponse(response=text)
+    try:
+        agent_response = chat_agent(request.message)
+        
+        # Extrai o texto da resposta
+        content_list = agent_response.message.get('content', [])
+        if content_list and 'text' in content_list[0]:
+            response_text = content_list[0]['text']
+        else:
+            response_text = str(agent_response)
+        
+        # Verifica se é uma chamada para a calculadora
+        if response_text.strip().startswith('{'):
+            try:
+                tool_call = json.loads(response_text)
+                if (tool_call.get('name') == 'calculator' and 
+                    'operation' in tool_call.get('arguments', {})):
+                    
+                    operation = tool_call['arguments']['operation']
+                    result = calculator(operation)
+                    return ChatResponse(response=result)
+            except json.JSONDecodeError:
+                pass  # Não é JSON válido, retorna o texto original
+        
+        return ChatResponse(response=response_text)
+    
+    except Exception as e:
+        return ChatResponse(response=f"Erro: {str(e)}")
