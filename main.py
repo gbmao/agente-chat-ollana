@@ -62,7 +62,7 @@ ollama_model = OllamaModel(
     host=OLLAMA_BASE_URL
 )
 
-chat_agent = Agent(model=ollama_model, tools=[calculator])
+chat_agent = Agent(model=ollama_model)
 
 
 
