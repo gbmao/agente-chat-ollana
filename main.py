@@ -80,5 +80,10 @@ chat_agent = Agent(model=ollama_model)
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
-    agent_response = await chat_agent(request.message)
-    return ChatResponse(response=agent_response.message)
+    agent_response = chat_agent(request.message)
+
+    
+
+    text = str(agent_response)
+
+    return ChatResponse(response=text)
