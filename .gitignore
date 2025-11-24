@@ -1,0 +1,8 @@
+# Arquivos de ambiente
+.env
+__pycache__/
+
+# Pastas de ambiente virtual
+.venv
+venv
+env
