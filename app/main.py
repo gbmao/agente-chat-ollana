@@ -9,7 +9,7 @@ from strands import Agent
 from strands import tool
 from strands.models.ollama import OllamaModel
 
-
+from app.tools.calculator import calculator
 
 
 load_dotenv()
@@ -37,21 +37,21 @@ class ChatResponse(BaseModel):
 
 
 
-@tool
-def calculator(operation: str) -> str:
-    """
-    Use esta ferramenta para resolver operações matemáticas e expressões.
-    A entrada deve ser a operação matemática (ex: '1234 * 5678' ou 'sqrt(144)').
-    """
-    try:
+# @tool
+# def calculator(operation: str) -> str:
+#     """
+#     Use esta ferramenta para resolver operações matemáticas e expressões.
+#     A entrada deve ser a operação matemática (ex: '1234 * 5678' ou 'sqrt(144)').
+#     """
+#     try:
 
-        import math
-        operation = operation.replace("sqrt","math.sqrt")
+#         import math
+#         operation = operation.replace("sqrt","math.sqrt")
 
-        result = eval(operation)
-        return str(result)
-    except Exception as e:
-        return f"Erro ao calcular: {e}"
+#         result = eval(operation)
+#         return str(result)
+#     except Exception as e:
+#         return f"Erro ao calcular: {e}"
     
 
 
@@ -63,23 +63,6 @@ ollama_model = OllamaModel(
 chat_agent = Agent(model=ollama_model, tools=[calculator])
 
 
-
-
-# @app.post("/chat", response_model=ChatResponse)
-# async def chat_endpoint(request: ChatRequest):
-
-
-#     agent_response = chat_agent(request.message)
-
-#     if hasattr(agent_response, 'content'):
-#             text = agent_response.content
-#     elif hasattr(agent_response, 'text'):
-#             text = agent_response.text
-#     else:
-#             text = str(agent_response)
-
-    
-#     return ChatResponse(response=text)
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
