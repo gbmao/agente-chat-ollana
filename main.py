@@ -51,13 +51,14 @@ def calculator(operation: str) -> str:
         operation = operation.replace("sqrt","math.sqrt")
 
         result = eval(operation)
+        return str(result)
     except Exception as e:
         return f"Erro ao calcular: {e}"
     
 
 
 ollama_model = OllamaModel(
-    model_name=OLLAMA_MODEL_NAME,
+    model_id=OLLAMA_MODEL_NAME,
     host=OLLAMA_BASE_URL
 )
 
@@ -65,14 +66,19 @@ chat_agent = Agent(model=ollama_model, tools=[calculator])
 
 
 
+# @app.post("/chat", response_model=ChatResponse)
+# async def chat_endpoint(request: ChatRequest):
+#     """
+#     Recebe uma mensagem do usuário, envia para o Agente de IA e retorna a resposta.
+#     """
+
+#     user_message = request.message
+
+#     response = await chat_agent.chat(user_message)
+
+#     return ChatResponse(response=response)
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
-    """
-    Recebe uma mensagem do usuário, envia para o Agente de IA e retorna a resposta.
-    """
-
-    user_message = request.message
-
-    response = await chat_agent.run(user_message)
-
-    return ChatResponse(response=response)
+    agent_response = await chat_agent(request.message)
+    return ChatResponse(response=agent_response.message)
