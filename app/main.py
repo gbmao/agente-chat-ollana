@@ -10,16 +10,9 @@ from strands import tool
 from strands.models.ollama import OllamaModel
 
 from app.tools.calculator import calculator
+from app.agents.agent import chat_agent
 
 
-load_dotenv()
-
-
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
-OLLAMA_MODEL_NAME = os.getenv("OLLAMA_MODEL_NAME")
-
-if not OLLAMA_BASE_URL or not OLLAMA_MODEL_NAME:
-    raise ValueError("As variáveis OLLAMA_BASE_URL e OLLAMA_MODEL_NAME devem estar configuradas no .env")
 
 
 
@@ -34,33 +27,6 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
-
-
-
-# @tool
-# def calculator(operation: str) -> str:
-#     """
-#     Use esta ferramenta para resolver operações matemáticas e expressões.
-#     A entrada deve ser a operação matemática (ex: '1234 * 5678' ou 'sqrt(144)').
-#     """
-#     try:
-
-#         import math
-#         operation = operation.replace("sqrt","math.sqrt")
-
-#         result = eval(operation)
-#         return str(result)
-#     except Exception as e:
-#         return f"Erro ao calcular: {e}"
-    
-
-
-ollama_model = OllamaModel(
-    model_id=OLLAMA_MODEL_NAME,
-    host=OLLAMA_BASE_URL
-)
-
-chat_agent = Agent(model=ollama_model, tools=[calculator])
 
 
 
