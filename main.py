@@ -8,6 +8,8 @@ from strands import Agent
 from strands import tool
 from strands.models.ollama import OllamaModel
 
+from ollama import chat
+from ollama import Tool
 
 # from strands_agents.agents import Agent
 # from strandsagents.llms import OllamaLLM
@@ -62,7 +64,7 @@ ollama_model = OllamaModel(
     host=OLLAMA_BASE_URL
 )
 
-chat_agent = Agent(model=ollama_model)
+chat_agent = Agent(model=ollama_model, tools=[calculator])
 
 
 
@@ -80,10 +82,9 @@ chat_agent = Agent(model=ollama_model)
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
+
+
     agent_response = chat_agent(request.message)
-
-    
-
     text = str(agent_response)
 
     return ChatResponse(response=text)
