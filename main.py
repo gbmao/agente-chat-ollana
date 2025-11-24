@@ -4,9 +4,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from strands_agents.agents import Agent
-from strands_agents.llms import OllamaLLM
-from strands_agents.tools import Tool, tool
+from strands import Agent
+from strands import tool
+from strands.models.ollama import OllamaModel
+
+
+# from strands_agents.agents import Agent
+# from strandsagents.llms import OllamaLLM
+# from strands_agents.tools import Tool, tool
 
 
 load_dotenv()
@@ -51,12 +56,12 @@ def calculator(operation: str) -> str:
     
 
 
-Ollama_llm = OllamaLLM(
+ollama_model = OllamaModel(
     model_name=OLLAMA_MODEL_NAME,
     base_url=OLLAMA_BASE_URL
 )
 
-chat_agent = Agent(llm=Ollama_llm, tools=[calculator])
+chat_agent = Agent(model=ollama_model, tools=[calculator])
 
 
 
