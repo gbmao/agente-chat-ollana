@@ -19,6 +19,8 @@ if not OLLAMA_BASE_URL or not OLLAMA_MODEL_NAME:
     raise ValueError("As variáveis OLLAMA_BASE_URL e OLLAMA_MODEL_NAME devem estar configuradas no .env")
 
 
+
+
 app = FastAPI(
     title="API de Chat com Agente Ollama",
     version="1.0.0"
@@ -50,13 +52,15 @@ def calculator(operation: str) -> str:
 
 
 Ollama_llm = OllamaLLM(
-    model_name==OLLAMA_MODEL_NAME,
+    model_name=OLLAMA_MODEL_NAME,
     base_url=OLLAMA_BASE_URL
 )
 
+chat_agent = Agent(llm=Ollama_llm, tools=[calculator])
 
 
-@app.post("/chat", reponse_model=ChatResponse)
+
+@app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     """
     Recebe uma mensagem do usuário, envia para o Agente de IA e retorna a resposta.
