@@ -58,7 +58,7 @@ def calculator(operation: str) -> str:
 
 ollama_model = OllamaModel(
     model_name=OLLAMA_MODEL_NAME,
-    base_url=OLLAMA_BASE_URL
+    host=OLLAMA_BASE_URL
 )
 
 chat_agent = Agent(model=ollama_model, tools=[calculator])
